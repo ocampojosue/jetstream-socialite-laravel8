@@ -54,6 +54,12 @@
                         </x-jet-button>
                     </div>
                 </div>
+                <div class="mt-2">
+                    <a href="/auth/github/redirect" class="btn btn-dark">
+                        <i class="fas fa-facebook"></i>
+                        Acceso con Github
+                     </a>
+                </div>
             </form>
         </div>
     </x-jet-authentication-card>

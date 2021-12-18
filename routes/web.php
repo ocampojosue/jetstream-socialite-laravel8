@@ -1,6 +1,9 @@
 <?php
 
+use App\Http\Controllers\FaceBookController;
+use App\Models\User;
 use Illuminate\Support\Facades\Route;
+use Laravel\Socialite\Facades\Socialite;
 
 /*
 |--------------------------------------------------------------------------
@@ -20,3 +23,26 @@ Route::get('/', function () {
 Route::middleware(['auth:sanctum', 'verified'])->get('/dashboard', function () {
     return view('dashboard');
 })->name('dashboard');
+
+Route::prefix('facebook')->name('facebook.')->group(function () {
+    Route::get('auth', [FaceBookController::class, 'loginUsingFacebook'])->name('login');
+    Route::get('callback', [FaceBookController::class, 'callbackFromFacebook'])->name('callback');
+});
+
+Route::get('/auth/github/redirect', function () {
+    return Socialite::driver('github')->redirect();
+});
+Route::get('/g', function () {
+    return redirect('dashboard');
+});
+Route::get('/auth/github/callback', function () {
+    $githubUser = Socialite::driver('github')->user();
+    //dd($githubUser);
+    $user = User::create([
+        'email' => $githubUser->getEmail(),
+        'name' => $githubUser->getName(),
+        'provider_id' => $githubUser->getId()
+    ]);
+    auth()->login($user, true);
+    return redirect('dashboard');
+});
