@@ -37,12 +37,21 @@ Route::get('/g', function () {
 });
 Route::get('/auth/github/callback', function () {
     $githubUser = Socialite::driver('github')->user();
+    $user = User::firstOrCreate(
+        [
+            'provider_id' => $githubUser->getId()
+        ],
+        [
+            'email' => $githubUser->getEmail(),
+            'name' => $githubUser->getName(),
+        ]
+    );
     //dd($githubUser);
-    $user = User::create([
-        'email' => $githubUser->getEmail(),
-        'name' => $githubUser->getName(),
-        'provider_id' => $githubUser->getId()
-    ]);
+    // $user = User::create([
+    //     'email' => $githubUser->getEmail(),
+    //     'name' => $githubUser->getName(),
+    //     'provider_id' => $githubUser->getId()
+    // ]);
     auth()->login($user, true);
     return redirect('dashboard');
 });
